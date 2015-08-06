@@ -13,14 +13,14 @@ class WordToNumber {
 		language
 			current language
 	*/
-	public $language = "english";
+	private $language = "english";
 
 	/*
 		languages
 			array of necessary number [ name => value ] pairs
 				for single, tens, and place separators
 	*/
-	public $languages = [
+	private $languages = [
 		"english" => [
 			"single" => [
 				"zero" => '0',
@@ -95,7 +95,7 @@ class WordToNumber {
 	/*
 		setLanguage (string)
 			changes the default language
-			returns FALSE if it doens't exist
+			returns FALSE if it doesn't exist
 	*/
 	public function setLanguage( $language ) {
 		if ( ! isset( $this->languages[ $language ] ) )
@@ -108,7 +108,7 @@ class WordToNumber {
 	/*
 		addLanguage
 			add a language
-			returns FALSE if the language exists
+			returns FALSE if the already language exists
 	*/
 	public function addLanguage( $name, $data ) {
 		if ( isset( $this->languages[ $language ] ) )
@@ -117,6 +117,7 @@ class WordToNumber {
 		$this->languages[ $language ] = $data;
 		return TRUE;
 	}
+
 	/*
 		updateLanguage
 			replace an existing language
@@ -137,7 +138,7 @@ class WordToNumber {
 			ex. createNumber( 23, 5 )
 				= 230000
 	*/
-	public function createNumber( $pre_number, $len ) {
+	private function createNumber( $pre_number, $len ) {
 		$number = ($len>0) ? str_repeat( "0", $len ) : '';
 		if ( $pre_number )
 			$number = $pre_number . substr( $number, 1 );
@@ -151,7 +152,7 @@ class WordToNumber {
 			ex. appendNumber( 111, 5, 230000 )
 				= 230111
 	*/
-	public function appendNumber( $pre_number, $len, $number ) {
+	private function appendNumber( $pre_number, $len, $number ) {
 		$insert = $this->createNumber( $pre_number, $len );
 		$result = substr( $number, 0, (strlen( $number ) - strlen( $insert )) ) . $insert;
 		return $result;
@@ -164,7 +165,7 @@ class WordToNumber {
 			Will match hundreds, tens, and singles
 			Returns number or FALSE
 	*/
-	public function parseGroup( $text ) {
+	private function parseGroup( $text ) {
 
 		$number = FALSE;
 		$pre_number = FALSE;
@@ -208,7 +209,7 @@ class WordToNumber {
 		parseSingle
 			Attempts to parse a string as a single digit
 	*/
-	public function parseSingle( $text ) {
+	private function parseSingle( $text ) {
 
 		foreach ( $this->languages[ $this->language ]["single"] as $word => $val ) {
 
@@ -226,7 +227,7 @@ class WordToNumber {
 			Will match for single digit only if a tens is found
 			otherwise returns FALSE;
 	*/
-	public function parseTens( $text ) {
+	private function parseTens( $text ) {
 
 		$number = FALSE;
 		foreach ( $this->languages[ $this->language ]["tens"] as $word => $val ) {
@@ -251,7 +252,7 @@ class WordToNumber {
 			attempts to parse it to numbers,
 			then returns it or FALSE
 	*/
-	public function parse( $text ){
+	public static function parse( $text ){
 
 		$number = FALSE;
 		foreach ( $this->languages[ $this->language ]["large"] as $word => $val ) {
@@ -282,7 +283,7 @@ class WordToNumber {
 		return $number;
 	}
 
-	public function trimArray( $array ) {
+	private function trimArray( $array ) {
 		return array_map( "trim", $array );
 	}
 
