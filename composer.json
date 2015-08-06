@@ -1,0 +1,18 @@
+{
+    "name": "daraeman/WordToNumber",
+    "description": "Convert Words To Numbers.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Rae",
+            "email": "daraeman@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "daraeman\\WordToNumber\\": "src/"
+        }
+    }
+}
