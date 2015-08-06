@@ -252,7 +252,7 @@ class WordToNumber {
 			attempts to parse it to numbers,
 			then returns it or FALSE
 	*/
-	public static function parse( $text ){
+	public function parse( $text ){
 
 		$number = FALSE;
 		foreach ( $this->languages[ $this->language ]["large"] as $word => $val ) {
