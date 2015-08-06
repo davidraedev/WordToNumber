@@ -253,6 +253,7 @@ class WordToNumber {
 			then returns it or FALSE
 	*/
 	public function parse( $text ){
+		$text = strtolower( $text );
 
 		$number = FALSE;
 		foreach ( $this->languages[ $this->language ]["large"] as $word => $val ) {
