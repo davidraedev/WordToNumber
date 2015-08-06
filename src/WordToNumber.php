@@ -1,11 +1,11 @@
 <?php
 
+namespace daraeman\WordToNumber;
+
 /*
 	wordToNumber Class
 		converts human readable word-numbers into (string) digits
 */
-
-namespace daraeman\WordToNumber;
 
 class WordToNumber {
 
@@ -90,6 +90,19 @@ class WordToNumber {
 	*/
 	public function listLanguages() {
 		return array_keys( $this->languages );
+	}
+
+	/*
+		setLanguage (string)
+			changes the default language
+			returns FALSE if it doens't exist
+	*/
+	public function setLanguage( $language ) {
+		if ( ! isset( $this->languages[ $language ] ) )
+			return FALSE;
+
+		$this->language = $language;
+		return TRUE;
 	}
 
 	/*
