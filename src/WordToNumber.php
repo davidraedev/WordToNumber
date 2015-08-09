@@ -19,6 +19,8 @@ class WordToNumber {
 		languages
 			array of necessary number [ name => value ] pairs
 				for single, tens, and place separators
+				in the "large" category, the value for each key
+				is the total number of digits, aka the nubmer of zeros plus one
 	*/
 	private $languages = [
 		"english" => [
@@ -78,8 +80,56 @@ class WordToNumber {
 				"octodecillion" => 58,
 				"novemdecillion" => 61,
 				"vigintillion" => 64,
-				'googol' => 101,
-				"centillion" => 304
+				"unvigintillion" =>  67,
+				"duovigintillion" => 70,
+				"tresvigintillion" => 73,
+				"quattuorvigintillion" => 76,
+				"quinquavigintillion" => 79,
+				"sesvigintillion" => 82,
+				"septemvigintillion" => 85,
+				"octovigintillion" => 88,
+				"novemvigintillion" => 91,
+				"trigintillion" => 94,
+				"untrigintillion" => 97,
+				"duotrigintillion" => 100,
+				"googol" => 101,
+				"trestrigintillion" => 103,
+				"quattuortrigintillion" => 106,
+				"quinquatrigintillion" => 110,
+				"sestrigintillion" => 112,
+				"septentrigintillion" => 115,
+				"octotrigintillion" => 118,
+				"noventrigintillion" => 121,
+				"quadragintillion" => 124,
+				"quinquagintillion" => 154,
+				"sexagintillion" => 184,
+				"septuagintillion" => 214,
+				"octogintillion" => 244,
+				"nonagintillion" => 274,
+				"centillion" => 304,
+				"uncentillion" => 307,
+				"duocentillion" => 310,
+				"trescentillion" => 313,
+				"decicentillion" => 334,
+				"undecicentillion" => 337,
+				"viginticentillion" => 364,
+				"unviginticentillion" => 367,
+				"trigintacentillion" => 394,
+				"quadragintacentillion" => 424,
+				"quinquagintacentillion" => 454,
+				"sexagintacentillion" => 484,
+				"septuagintacentillion" => 514,
+				"octogintacentillion" => 544,
+				"nonagintacentillion" => 574,
+				"ducentillion" => 604,
+				"trecentillion" => 904,
+				"quadringentillion" => 1204,
+				"quingentillion" => 1504,
+				"sescentillion" => 1804,
+				"septingentillion" => 2104,
+				"octingentillion" => 2404,
+				"nongentillion" => 2704,
+				"millinillion" => 3004
 			]
 		]
 	];
@@ -106,29 +156,11 @@ class WordToNumber {
 	}
 
 	/*
-		addLanguage
-			add a language
-			returns FALSE if the already language exists
+		updateLanguageData
+			create or replaces a language's data
 	*/
-	public function addLanguage( $name, $data ) {
-		if ( isset( $this->languages[ $language ] ) )
-			return FALSE;
-
+	public function updateLanguageData( $name, $data ) {
 		$this->languages[ $language ] = $data;
-		return TRUE;
-	}
-
-	/*
-		updateLanguage
-			replace an existing language
-			returns FALSE if the language does not exist
-	*/
-	public function updateLanguage( $name, $data ) {
-		if ( ! isset( $this->languages[ $language ] ) )
-			return FALSE;
-
-		$this->languages[ $language ] = $data;
-		return TRUE;
 	}
 
 	/*
