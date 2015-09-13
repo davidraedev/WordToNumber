@@ -2,6 +2,8 @@
 
 *Converts Words To Numbers*
 
+[![Build Status](https://travis-ci.org/daraeman/WordToNumber.png?branch=master)](https://travis-ci.org/daraeman/WordToNumber)
+
 ## Installation
 
 Add to composer.json's `repositories` array
