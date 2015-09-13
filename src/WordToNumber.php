@@ -10,13 +10,22 @@ namespace daraeman\WordToNumber;
 class WordToNumber {
 
 	/*
-		language
+		(string) language
 			current language
 	*/
 	private $language = "english";
 
 	/*
-		languages
+		(array) validate_list
+			function to determine whether a string should be parsed
+		(bool) validate_positive
+			TRUE for inclusive match, FALSE for exclusive match
+	*/
+	private $validate_list = [];
+	private $validate_positive = TRUE;
+
+	/*
+		(array) languages
 			array of necessary number [ name => value ] pairs
 				for single, tens, and place separators
 				in the "large" category, the value for each key
@@ -156,11 +165,61 @@ class WordToNumber {
 	}
 
 	/*
+		getLanguageData
+			return a language's data
+	*/
+	public function getLanguageData( $language ) {
+		return $this->languages[ $language ];
+	}
+
+	/*
 		updateLanguageData
 			create or replaces a language's data
 	*/
-	public function updateLanguageData( $name, $data ) {
+	public function updateLanguageData( $language, $data ) {
 		$this->languages[ $language ] = $data;
+	}
+
+	/*
+		setValidator
+			Takes a single, or array of regex strings
+			to test numbers against before parsing.
+			Inputting a falsy variable will turn this off.
+	*/
+	public function setValidator( $list, $positive = TRUE ) {
+
+		$this->validate_positive = $positive;
+
+		if ( empty( $list ) )
+			$this->validate_list = [];
+		elseif ( is_array( $list ) )
+			$this->validate_list = $list;
+		else
+			$this->validate_list = [ $list ];
+	}
+
+	/*
+		validate
+			Takes a single, or array of regex strings
+			to test numbers against before parsing
+	*/
+	public function validate( $string ) {
+
+		if ( empty( $this->validate_list ) )
+			return $string;
+
+		foreach( $this->validate_list as $regex ) {
+			if ( $this->validate_positive ) {
+				if ( preg_match( $regex, $string ) )
+					return TRUE;
+			}
+			else {
+				if ( ! preg_match( $regex, $string ) )
+					return FALSE;
+			}
+		}
+
+		return ! $this->validate_positive;
 	}
 
 	/*
@@ -279,12 +338,17 @@ class WordToNumber {
 	}
 
 	/*
-		The main function
-			takes a string as input,
+		parse
+			The main function of this class.
+			Takes a string as input,
 			attempts to parse it to numbers,
 			then returns it or FALSE
 	*/
 	public function parse( $text ){
+
+		if ( ! $this->validate( $text ) )
+			return FALSE;
+
 		$text = strtolower( $text );
 
 		$number = FALSE;
