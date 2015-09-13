@@ -14,16 +14,6 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expectedResult, $result );
 	}
 
-	public function testParseNumberMultiple() {
-		$input = "four eight fifteen sixteen twenty-three fortytwo";
-		$expectedResult = "12";
-
-		$wordToNumber = new WordToNumber();
-		$result = $wordToNumber->parse( $input );
-
-		$this->assertEquals( $expectedResult, $result );
-	}
-
 	public function testParseNumberOddlyFormatted() {
 		$input = "ninetEENthousandeighTY-eight";
 		$expectedResult = "19088";
