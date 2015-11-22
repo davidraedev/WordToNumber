@@ -225,7 +225,7 @@ class WordToNumber {
 
 		if ( ! empty( $this->validate_blacklist ) ) {
 			foreach( $this->validate_blacklist as $regex ) {
-				if ( ! preg_match( $regex, $string ) )
+				if ( preg_match( $regex, $string ) )
 					return FALSE;
 			}
 		}

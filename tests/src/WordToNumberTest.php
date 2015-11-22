@@ -62,58 +62,7 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expectedResult, $result );
 	}
 
-	public function testCustomValidatorSingle() {
-
-		$wordToNumber = new WordToNumber();
-		$wordToNumber->setValidator( '/Five/' );
-
-		$result = $wordToNumber->parse( 'I AM NUMBER ONE!' );
-		$this->assertEquals( FALSE, $result );
-
-		$result = $wordToNumber->parse( 'five' );
-		$this->assertEquals( FALSE, $result );
-
-		$result = $wordToNumber->parse( 'Five hundred' );
-		$this->assertEquals( 500, $result );
-
-		$result = $wordToNumber->parse( 'Five' );
-		$this->assertEquals( 5, $result );
-
-	}
-
-	public function testCustomValidatorArray() {
-
-		$wordToNumber = new WordToNumber();
-		$wordToNumber->setValidator([
-			'/Five/i',
-			'/sixteen/'
-		]);
-
-		$result = $wordToNumber->parse( 'I AM NUMBER ONE!' );
-		$this->assertEquals( FALSE, $result );
-
-		$result = $wordToNumber->parse( 'five' );
-		$this->assertEquals( 5, $result );
-
-		$result = $wordToNumber->parse( 'Five hundred' );
-		$this->assertEquals( 500, $result );
-
-		$result = $wordToNumber->parse( 'Five' );
-		$this->assertEquals( 5, $result );
-
-		$result = $wordToNumber->parse( 'sixteen' );
-		$this->assertEquals( 16, $result );
-
-		$wordToNumber->setValidator([
-			'/Five/i',
-			'/sixteen/'
-		], FALSE );
-
-		$result = $wordToNumber->parse( 'sixteen' );
-		$this->assertEquals( FALSE, $result );
-	}
-
-	public function testClearCustomValidator() {
+	public function testCustomValidatorWhitelistSingle() {
 
 		$wordToNumber = new WordToNumber();
 		$wordToNumber->setValidatorWhitelist( '/Five/' );
@@ -122,6 +71,22 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals( FALSE, $result );
 		$result = $wordToNumber->parse( 'Five' );
 		$this->assertEquals( 5, $result );
+
+	}
+
+	public function testCustomValidatorBlacklistSingle() {
+
+		$wordToNumber = new WordToNumber();
+		$wordToNumber->setValidatorBlacklist( '/Five/' );
+
+		$result = $wordToNumber->parse( 'Five' );
+		$this->assertEquals( FALSE, $result );
+		$result = $wordToNumber->parse( 'five' );
+		$this->assertEquals( 5, $result );
+
+	}
+
+	public function testCustomValidatorWhitelistArray() {
 
 		$wordToNumber = new WordToNumber();
 		$wordToNumber->setValidatorWhitelist([ '/Five/i', '/six/' ]);
@@ -133,13 +98,9 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$result = $wordToNumber->parse( 'seven' );
 		$this->assertEquals( FALSE, $result );
 
-		$wordToNumber->setValidatorWhitelist( 0 );
-		$wordToNumber->setValidatorBlacklist( '/Five/' );
+	}
 
-		$result = $wordToNumber->parse( 'Five' );
-		$this->assertEquals( FALSE, $result );
-		$result = $wordToNumber->parse( 'five' );
-		$this->assertEquals( 5, $result );
+	public function testCustomValidatorBlacklistArray() {
 
 		$wordToNumber = new WordToNumber();
 		$wordToNumber->setValidatorBlacklist([ '/Five/i', '/six/' ]);
@@ -150,6 +111,37 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals( FALSE, $result );
 		$result = $wordToNumber->parse( 'seven' );
 		$this->assertEquals( 7, $result );
+
+	}
+
+	public function testClearCustomValidatorWhitelist() {
+
+		$wordToNumber = new WordToNumber();
+		$wordToNumber->setValidatorWhitelist( '/five/' );
+
+		$result = $wordToNumber->parse( 'six' );
+		$this->assertEquals( FALSE, $result );
+
+		$wordToNumber->setValidatorWhitelist( FALSE );
+
+		$result = $wordToNumber->parse( 'six' );
+		$this->assertEquals( 6, $result );
+
+	}
+
+	public function testClearCustomValidatorBlacklist() {
+
+		$wordToNumber = new WordToNumber();
+		$wordToNumber->setValidatorBlacklist( '/five/' );
+
+		$result = $wordToNumber->parse( 'five' );
+		$this->assertEquals( FALSE, $result );
+
+		$wordToNumber->setValidatorBlacklist( FALSE );
+
+		$result = $wordToNumber->parse( 'five' );
+		$this->assertEquals( 5, $result );
+		
 	}
 
 }
