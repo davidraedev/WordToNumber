@@ -16,13 +16,12 @@ class WordToNumber {
 	private $language = "english";
 
 	/*
-		(array) validate_list
-			function to determine whether a string should be parsed
-		(bool) validate_positive
-			TRUE for inclusive match, FALSE for exclusive match
+		(array) validate_whitelist
+		(array) validate_blacklist
+			regexes to determine whether a string should be parsed
 	*/
-	private $validate_list = [];
-	private $validate_positive = TRUE;
+	private $validate_whitelist = [];
+	private $validate_blacklist = [];
 
 	/*
 		(array) languages
@@ -181,45 +180,66 @@ class WordToNumber {
 	}
 
 	/*
-		setValidator
+		setValidatorWhitelist
 			Takes a single, or array of regex strings
 			to test numbers against before parsing.
-			Inputting a falsy variable will turn this off.
+			Only matching values will be included.
+			This is run before setValidatorWhitelist.
+			Passing a falsey value will clear thie list.
 	*/
-	public function setValidator( $list, $positive = TRUE ) {
-
-		$this->validate_positive = $positive;
+	public function setValidatorWhitelist( $list ) {
 
 		if ( empty( $list ) )
-			$this->validate_list = [];
+			$this->validate_whitelist = [];
 		elseif ( is_array( $list ) )
-			$this->validate_list = $list;
+			$this->validate_whitelist = $list;
 		else
-			$this->validate_list = [ $list ];
+			$this->validate_whitelist = [ $list ];
+	}
+
+	/*
+		setValidatorBlacklist
+			Takes a single, or array of regex strings
+			to test numbers against before parsing.
+			Matching values will be exluded.
+			This is run before setValidatorWhitelist.
+			Passing a falsey value will clear thie list.
+	*/
+	public function setValidatorBlacklist( $list ) {
+
+		if ( empty( $list ) )
+			$this->validate_blacklist = [];
+		elseif ( is_array( $list ) )
+			$this->validate_blacklist = $list;
+		else
+			$this->validate_blacklist = [ $list ];
 	}
 
 	/*
 		validate
-			Takes a single, or array of regex strings
-			to test numbers against before parsing
+			Validates a string against the setValidatorBlacklist
+			and then the setValidatorWhitelist to test numberstrings
+			against before parsing
 	*/
 	public function validate( $string ) {
 
-		if ( empty( $this->validate_list ) )
-			return $string;
-
-		foreach( $this->validate_list as $regex ) {
-			if ( $this->validate_positive ) {
-				if ( preg_match( $regex, $string ) )
-					return TRUE;
-			}
-			else {
+		if ( ! empty( $this->validate_blacklist ) ) {
+			foreach( $this->validate_blacklist as $regex ) {
 				if ( ! preg_match( $regex, $string ) )
 					return FALSE;
 			}
 		}
 
-		return ! $this->validate_positive;
+		if ( empty( $this->validate_whitelist ) )
+			return TRUE;
+
+		foreach( $this->validate_whitelist as $regex ) {
+			if ( preg_match( $regex, $string ) )
+				return TRUE;
+		}
+
+		return FALSE;
+
 	}
 
 	/*
