@@ -26,9 +26,10 @@ A string containing multiple word-numbers `"four eight fifteen sixteen twenty-th
 Returns the number in string form, or FALSE
 
 ###### setValidatorWhitelist( string/array )
-###### setValidatorBlacklist( string/array )
-Takes a single, or array of regex strings to test numbers against before parsing. Matching values will be exluded. This is run before setValidatorWhitelist. Passing a falsey value will clear thie list.
+Takes a single, or array of regex strings to test numbers against before parsing. Non-matching values will be excluded. This is run after setValidatorBlacklist. Passing a falsey value will clear the list.
 
+###### setValidatorBlacklist( string/array )
+Takes a single, or array of regex strings to test numbers against before parsing. Matching values will be excluded. This is run before setValidatorWhitelist. Passing a falsey value will clear the list.
 
 ###### _array_ listLanguages()
 Lists the available languages
