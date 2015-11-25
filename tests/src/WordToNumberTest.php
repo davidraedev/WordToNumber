@@ -1,6 +1,6 @@
 ﻿<?php
 
-use daraeman\WordToNumber\WordToNumber;
+use daraeman\WordToNumber;
 
 class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 	
