@@ -362,7 +362,7 @@ class WordToNumber {
 			The main function of this class.
 			Takes a string as input,
 			attempts to parse it to numbers,
-			then returns it or FALSE
+			then returns a number or FALSE
 	*/
 	public function parse( $text ){
 
@@ -371,11 +371,14 @@ class WordToNumber {
 
 		$text = strtolower( $text );
 
+		// loop thorugh all our "large numbers"
 		$number = FALSE;
 		foreach ( $this->languages[ $this->language ]["large"] as $word => $val ) {
 
 			if ( strpos( $text, $word ) !== FALSE ) {
 
+				// parse the "pre-number" eg. (one hundred)
+				// and add it to our full number in the current "large" place
 				$match = $this->trimArray( explode( $word, $text ) );
 				$pre_number = ( $match && ! empty( $match[0] ) ) ? $match[0] : FALSE ;
 				$text = $match[1];
@@ -400,7 +403,12 @@ class WordToNumber {
 		return $number;
 	}
 
-	private function trimArray( $array ) {
+
+	/*
+		trimArray
+			Trims each element in an array
+	*/
+	private function trimArray( array $array ) {
 		return array_map( "trim", $array );
 	}
 
