@@ -1,6 +1,6 @@
 <?php
 
-namespace daraeman\WordToNumber;
+namespace daraeman;
 
 /*
 	wordToNumber Class
