@@ -270,30 +270,50 @@ class WordToNumber {
 	}
 
 	/*
-		parseGroup
+		parsePreNumber
 			Attempts to parse a string and return the hundreds number for it
 			This is used to generate the amount for each number separator ( thousand, million... )
 			Will match hundreds, tens, and singles
 			Returns number or FALSE
+
+
+			// one hundred and seventy-three
 	*/
-	private function parseGroup( $text ) {
+	private function parsePreNumber( $text, $do_check = TRUE ) {
 
 		$number = FALSE;
 		$pre_number = FALSE;
 		$post_number = $text;
+
+		if ( $do_check ) {
+			$check = FALSE;
+			$check_array = array_merge(
+				["hundred" => 1],
+				$this->languages[ $this->language ]["single"],
+				$this->languages[ $this->language ]["tens"]
+			);
+			foreach ( $check_array as $key => $val ) {
+				if ( $this->startsWith( $text, $key ) ) {
+					$check = TRUE;
+					break;
+				}
+			}
+			if ( ! $check )
+				return FALSE;
+		}
+
 		if ( strpos( $text, "hundred" ) !== FALSE ) {
 
 			$matches = $this->trimArray( explode( "hundred", $text ) );
-
 			if ( strlen( $matches[0] ) )
 				$pre_number = $this->parseSingle( $matches[0] );
-			
+
 			$number = $this->createNumber( $pre_number, 3 );
-			
-			$post_number = trim( $matches[1] );
+			$post_number = $this->trimSeparators( $matches[1] );
 
 		}
 		if ( strlen( $post_number ) ) {
+
 			$tens = $this->parseTens( $post_number );
 			if ( strlen( $tens ) ) {
 				if ( $number )
@@ -347,13 +367,13 @@ class WordToNumber {
 
 			if ( $match && isset( $match[1] ) ) {
 				$number = $val;
-				$single = ( ! empty( $match[1] ) ) ? $this->parseSingle( str_replace( $word, "", $text ) ) : FALSE ;
-				return ( $single ) ? substr( $number, 0, 1 ) . $single : $number;
+				$single = ( ! empty( $match[1] ) ) ? $this->parseSingle( $match[1] ) : FALSE ;
+				return ( $single ) ? substr( $number, 0, 1 ) . $single : $number ;
 			}
 
 		}
 
-		return false;
+		return FALSE;
 
 	}
 
@@ -371,19 +391,19 @@ class WordToNumber {
 
 		$text = strtolower( $text );
 
-		// loop thorugh all our "large numbers"
+		// loop thorugh all our "large numbers" longest to shortest
 		$number = FALSE;
-		foreach ( $this->languages[ $this->language ]["large"] as $word => $val ) {
+		foreach ( array_reverse( $this->languages[ $this->language ]["large"] ) as $word => $val ) {
 
 			if ( strpos( $text, $word ) !== FALSE ) {
 
 				// parse the "pre-number" eg. (one hundred)
 				// and add it to our full number in the current "large" place
 				$match = $this->trimArray( explode( $word, $text ) );
-				$pre_number = ( $match && ! empty( $match[0] ) ) ? $match[0] : FALSE ;
+				$pre_number = ( $match && ! empty( $match[0] ) ) ? $match[0] : FALSE;
 				$text = $match[1];
 
-				$pre_number_parsed = ( $this->parseGroup( $pre_number ) ) ?: '';
+				$pre_number_parsed = ( $this->parsePreNumber( $this->trimSeparators( $pre_number ), ( $number !== FALSE ) ) ) ?: '' ;
 
 				if ( $number == FALSE )
 					$number = $this->createNumber( $pre_number_parsed, $val );
@@ -392,7 +412,8 @@ class WordToNumber {
 			}
 		}
 
-		$pre_number_parsed = ( $this->parseGroup( $text ) ) ?: '';
+		// this is to catch any remaining numbers (tens and/or singles) at the end of the string
+		$pre_number_parsed = $this->parsePreNumber( $this->trimSeparators( $text ), ( $number !== FALSE ) );
 		if ( $pre_number_parsed !== FALSE ) {
 			if ( $number )
 				$number = $this->appendNumber( $pre_number_parsed, ( strlen( $pre_number_parsed ) - 1 ), $number );
@@ -410,6 +431,23 @@ class WordToNumber {
 	*/
 	private function trimArray( array $array ) {
 		return array_map( "trim", $array );
+	}
+
+	/*
+		trimSeparators
+			Trims the things like spaces and the word "and"
+	*/
+	private function trimSeparators( $str ) {
+		$str = preg_replace( "/^([\s.,-]+)?((and)([\s.,-]+))?/i", '', $str );
+		return preg_replace( "/(([\s.,-]+)(and)?)([\s.,-]+)?$/i", '', $str );
+	}
+
+	/*
+		startsWith
+			checks if a string starts with a string
+	*/
+	private function startsWith( $string, $needle ) {
+		return preg_match( "/^". $needle ."/", $string );
 	}
 
 }
