@@ -5,61 +5,73 @@ use daraeman\WordToNumber;
 class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 	
 	public function testParseNumberNormal() {
-		$input = "eight hundred fifteen";
-		$expectedResult = "815";
 
 		$wordToNumber = new WordToNumber();
-		$result = $wordToNumber->parse( $input );
 
-		$this->assertEquals( $expectedResult, $result );
+		$checks = [
+			"one" => "1",
+			"seventy three" => "73",
+			"one hundred" => "100",
+			"one hundred seven" => "107",
+			"one hundred seventy" => "170",
+			"one hundred seventy three" => "173",
+			"one hundred seventy-three" => "173",
+			"one hundred and seventy-three" => "173",
+			"one hundred and seventy-three thousand" => "173000",
+			"one hundred and seventy-three million" => "173000000",
+			"one hundred and seventy-three million two thousand" => "173002000",
+			"one hundred,,,,,and,,,,,seventy-three million two thousand and two" => "173002002",
+			"one hundred and - --seventy-three billion" => "173000000000",
+			"one hundred.- .,and seventy-three trillion five million sixty seven thousand one hundred and eighty two" => "173000005067182",
+			"just some extra text here one hundred and seventy-three some more text at the end" => "173",
+		];
+
+		foreach ( $checks as $check => $expected ) {
+			$result = $wordToNumber->parse( $check );
+			$this->assertEquals( $expected, $result );
+		}
 	}
 
 	public function testParseNumberOddlyFormatted() {
-		$input = "ninetEENthousandeighTY-eight";
-		$expectedResult = "19088";
 
 		$wordToNumber = new WordToNumber();
-		$result = $wordToNumber->parse( $input );
+		$result = $wordToNumber->parse( "ninetEENthousandeighTY-eight" );
 
-		$this->assertEquals( $expectedResult, $result );
+		$this->assertEquals( "19088", $result );
 	}
 
 	public function testListLanguages() {
-		$expectedResult = [ "english" ];
 
 		$wordToNumber = new WordToNumber();
 		$result = $wordToNumber->listLanguages();
 
-		$this->assertEquals( $expectedResult, $result );
+		$this->assertEquals( [ "english" ], $result );
 	}
 
 	public function testSetLanguageExists() {
-		$expectedResult = TRUE;
 
 		$wordToNumber = new WordToNumber();
 		$result = $wordToNumber->setLanguage( "english" );
 
-		$this->assertEquals( $expectedResult, $result );
+		$this->assertEquals( TRUE, $result );
 	}
 
 	public function testSetLanguageDoesNotExist() {
-		$expectedResult = FALSE;
 
 		$wordToNumber = new WordToNumber();
 		$result = $wordToNumber->setLanguage( "Pirahã" );
 
-		$this->assertEquals( $expectedResult, $result );
+		$this->assertEquals( FALSE, $result );
 	}
 
 	public function testUpdateLanguageData() {
-		$expectedResult = TRUE;
 
 		$wordToNumber = new WordToNumber();
 		$wordToNumber->updateLanguageData( "Pirahã", [ "all the datas" => TRUE ] );
 		$result = $wordToNumber->getLanguageData( "Pirahã" );
 		$result = ( ! empty( $result ) );
 
-		$this->assertEquals( $expectedResult, $result );
+		$this->assertEquals( TRUE, $result );
 	}
 
 	public function testCustomValidatorWhitelistSingle() {
