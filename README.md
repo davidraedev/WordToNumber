@@ -45,3 +45,17 @@ Set the language that should be used to parse the text
 
 ###### updateLanguageData( string )
 Name, (array) Data ) Creates or replaces a language's data.<br>Takes an array that should be formatted as the default english one.
+
+### Example
+	$wordtoNumber = new wordToNumber();
+	$wordtoNumber->setValidatorBlacklist( '/hundred/i' );
+	$wordtoNumber->setValidatorWhitelist([
+		'/one|two|three|four/i',
+		'/five|six|seven|eight/i'
+	]);
+	$number = $wordtoNumber->parse( 'eight' );
+	var_dump( $number );
+	// string(1) "8"
+	$number = $wordtoNumber->parse( 'eight hundred' );
+	var_dump( $number );
+	// bool(false)
