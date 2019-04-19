@@ -47,6 +47,7 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
             "quarante-deux" => "42",
             "soixante-treize" => "73",
             "soixante treize" => "73",
+            "quatre-vingts" => "80",
             "quatre vingt treize" => "93",
             "cent" => "100",
             "six cent" => "600",
