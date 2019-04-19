@@ -3,34 +3,67 @@
 use daraeman\WordToNumber;
 
 class WordToNumberTest extends \PHPUnit_Framework_TestCase {
-	
-	public function testParseNumberNormal() {
 
-		$wordToNumber = new WordToNumber();
+    public function testParseNumberNormal() {
 
-		$checks = [
-			"one" => "1",
-			"seventy three" => "73",
-			"one hundred" => "100",
-			"one hundred seven" => "107",
-			"one hundred seventy" => "170",
-			"one hundred seventy three" => "173",
-			"one hundred seventy-three" => "173",
-			"one hundred and seventy-three" => "173",
-			"one hundred and seventy-three thousand" => "173000",
-			"one hundred and seventy-three million" => "173000000",
-			"one hundred and seventy-three million two thousand" => "173002000",
-			"one hundred,,,,,and,,,,,seventy-three million two thousand and two" => "173002002",
-			"one hundred and - --seventy-three billion" => "173000000000",
-			"one hundred.- .,and seventy-three trillion five million sixty seven thousand one hundred and eighty two" => "173000005067182",
-			"just some extra text here one hundred and seventy-three some more text at the end" => "173",
-		];
+        $wordToNumber = new WordToNumber();
 
-		foreach ( $checks as $check => $expected ) {
-			$result = $wordToNumber->parse( $check );
-			$this->assertEquals( $expected, $result );
-		}
-	}
+        $checks = [
+            "one" => "1",
+            "seventy three" => "73",
+            "one hundred" => "100",
+            "one hundred seven" => "107",
+            "one hundred seventy" => "170",
+            "one hundred seventy three" => "173",
+            "one hundred seventy-three" => "173",
+            "one hundred and seventy-three" => "173",
+            "one hundred and seventy-three thousand" => "173000",
+            "one hundred and seventy-three million" => "173000000",
+            "one hundred and seventy-three million two thousand" => "173002000",
+            "one hundred,,,,,and,,,,,seventy-three million two thousand and two" => "173002002",
+            "one hundred and - --seventy-three billion" => "173000000000",
+            "one hundred.- .,and seventy-three trillion five million sixty seven thousand one hundred and eighty two" => "173000005067182",
+            "just some extra text here one hundred and seventy-three some more text at the end" => "173",
+        ];
+
+        foreach ( $checks as $check => $expected ) {
+            $result = $wordToNumber->parse( $check );
+            if ( $expected !== $result ) {
+                $this->fail( "'$check' yielded '$result' instead of expected '$expected'." );
+            }
+        }
+    }
+
+    public function testParseNumberInFrench() {
+
+        $wordToNumber = new WordToNumber();
+        $wordToNumber->setLanguage( 'french' );
+
+        $checks = [
+            "zéro" => "0",
+            "zero" => "0",
+            "un" => "1",
+            "quarante-deux" => "42",
+            "soixante-treize" => "73",
+            "soixante treize" => "73",
+            "quatre vingt treize" => "93",
+            "cent" => "100",
+            "cent sept" => "107",
+            "cent soixante-dix" => "170",
+            "cent soixante treize" => "173",
+            "cent soixante treize mille" => "173000",
+            "cent soixante treize million" => "173000000",
+            "cent soixante treize millions" => "173000000",
+            "cent soixante treize millions deux mille" => "173002000",
+        ];
+
+        foreach ( $checks as $check => $expected ) {
+            $result = $wordToNumber->parse( $check );
+            if ( $expected !== $result ) {
+                $this->fail( "'$check' yielded '$result' instead of expected '$expected'." );
+            }
+        }
+    }
 
 	public function testParseNumberOddlyFormatted() {
 
