@@ -78,7 +78,7 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$wordToNumber = new WordToNumber();
 		$result = $wordToNumber->listLanguages();
 
-		$this->assertEquals( [ "english" ], $result );
+		$this->assertEquals( [ "english", 'french' ], $result );
 	}
 
 	public function testSetLanguageExists() {
