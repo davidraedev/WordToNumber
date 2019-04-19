@@ -65,6 +65,7 @@ class WordToNumber {
 				"eighty" => '80',
 				"ninety" => '90'
 			],
+            "hundred" => "hundred",
 			"large" => [
 				"hundred" => 3,
 				"thousand" => 4,
@@ -157,7 +158,7 @@ class WordToNumber {
             ],
             "tens" => [
                 "dix" => '10',
-                "one" => '11',
+                "onze" => '11',
                 "douze" => '12',
                 "treize" => '13',
                 "quatorze" => '14',
@@ -172,15 +173,23 @@ class WordToNumber {
                 "cinquante" => '50',
                 "soixante" => '60',
                 "soixante-dix" => '70',
+                "soixante dix" => '70',
                 "quatre-vingt" => '80',
-                "quatre-vingt-dix" => '90'
+                "quatre vingt" => '80',
+                "quatre-vingt-dix" => '90',
+                "quatre-vingt dix" => '90',
+                "quatre vingt dix" => '90',
             ],
+            "hundred" => "cent",
             "large" => [
                 "cent" => 3,
                 "mille" => 4,
                 "million" => 7,
+                "millions" => 7,
                 "milliard" => 10,
+                "milliards" => 10,
                 "billiard" => 13,
+                "billiards" => 13,
                 // todo below
                 "quadrillion" => 16,
                 "quintillion" => 19,
@@ -396,10 +405,12 @@ class WordToNumber {
 		$pre_number = FALSE;
 		$post_number = $text;
 
+		$hundred = $this->languages[ $this->language ]["hundred"];
+
 		if ( $do_check ) {
 			$check = FALSE;
 			$check_array = array_merge(
-				["hundred" => 1],
+				[$hundred => 1],
 				$this->languages[ $this->language ]["single"],
 				$this->languages[ $this->language ]["tens"]
 			);
@@ -413,11 +424,14 @@ class WordToNumber {
 				return FALSE;
 		}
 
-		if ( strpos( $text, "hundred" ) !== FALSE ) {
+		if ( strpos( $text, $hundred ) !== FALSE ) {
 
-			$matches = $this->trimArray( explode( "hundred", $text ) );
-			if ( strlen( $matches[0] ) )
+			$matches = $this->trimArray( explode( $hundred, $text ) );
+			if ( strlen( $matches[0] ) ) {
 				$pre_number = $this->parseSingle( $matches[0] );
+            } else {
+			    $pre_number = 1;
+            }
 
 			$number = $this->createNumber( $pre_number, 3 );
 			$post_number = $this->trimSeparators( $matches[1] );
@@ -472,14 +486,17 @@ class WordToNumber {
 	private function parseTens( $text ) {
 
 		$number = FALSE;
-		foreach ( $this->languages[ $this->language ]["tens"] as $word => $val ) {
+		foreach ( array_reverse($this->languages[ $this->language ]["tens"]) as $word => $val ) {
 
 			$match = explode( $word, $text );
 
 			if ( $match && isset( $match[1] ) ) {
 				$number = $val;
 				$single = ( ! empty( $match[1] ) ) ? $this->parseSingle( $match[1] ) : FALSE ;
-				return ( $single ) ? substr( $number, 0, 1 ) . $single : $number ;
+				if ( FALSE === $single ) {
+				    $single = ( ! empty( $match[1] ) ) ? $this->parseTens( $match[1] ) : FALSE ;
+                }
+				return ( $single ) ? (string)(intval($number)+intval($single)) : $number ;
 			}
 
 		}
@@ -502,7 +519,7 @@ class WordToNumber {
 
 		$text = strtolower( $text );
 
-		// loop thorugh all our "large numbers" longest to shortest
+		// loop through all our "large numbers" longest to shortest
 		$number = FALSE;
 		foreach ( array_reverse( $this->languages[ $this->language ]["large"] ) as $word => $val ) {
 
@@ -515,6 +532,9 @@ class WordToNumber {
 				$text = $match[1];
 
 				$pre_number_parsed = ( $this->parsePreNumber( $this->trimSeparators( $pre_number ), ( $number !== FALSE ) ) ) ?: '' ;
+
+				if ( empty($pre_number_parsed) )
+				    $pre_number_parsed = 1;
 
 				if ( $number == FALSE )
 					$number = $this->createNumber( $pre_number_parsed, $val );

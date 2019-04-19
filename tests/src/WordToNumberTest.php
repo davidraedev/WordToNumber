@@ -18,6 +18,7 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
             "one hundred seventy-three" => "173",
             "one hundred and seventy-three" => "173",
             "one hundred and seventy-three thousand" => "173000",
+            "two hundred, seventy-three thousand" => "273000",
             "one hundred and seventy-three million" => "173000000",
             "one hundred and seventy-three million two thousand" => "173002000",
             "one hundred,,,,,and,,,,,seventy-three million two thousand and two" => "173002002",
@@ -48,13 +49,16 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
             "soixante treize" => "73",
             "quatre vingt treize" => "93",
             "cent" => "100",
+            "six cent" => "600",
             "cent sept" => "107",
             "cent soixante-dix" => "170",
             "cent soixante treize" => "173",
+            "deux cent soixante treize mille" => "273000",
             "cent soixante treize mille" => "173000",
             "cent soixante treize million" => "173000000",
             "cent soixante treize millions" => "173000000",
-            "cent soixante treize millions deux mille" => "173002000",
+            "cent soixante seize million deux mille" => "176002000",
+            "neuf cent vingt-deux millions deux mille trois cent dix-huit" => "922002318",
         ];
 
         foreach ( $checks as $check => $expected ) {
