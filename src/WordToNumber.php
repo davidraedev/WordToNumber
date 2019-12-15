@@ -65,6 +65,7 @@ class WordToNumber {
 				"eighty" => '80',
 				"ninety" => '90'
 			],
+            "hundred" => "hundred",
 			"large" => [
 				"hundred" => 3,
 				"thousand" => 4,
@@ -74,17 +75,17 @@ class WordToNumber {
 				"quadrillion" => 16,
 				"quintillion" => 19,
 				"sextillion" => 22,
-				"septillion" => 23,
+				"septillion" => 25,
 				"octillion" => 28,
 				"nonillion" => 31,
 				"decillion" => 34,
 				"undecillion" => 37,
 				"duodecillion" => 40,
-				"tredecillion" => 41,
+				"tredecillion" => 43,
 				"quattuordecillion" => 46,
 				"quindecillion" => 49,
 				"sexdecillion" => 52,
-				"septendecillion" => 53,
+				"septendecillion" => 55,
 				"octodecillion" => 58,
 				"novemdecillion" => 61,
 				"vigintillion" => 64,
@@ -103,7 +104,7 @@ class WordToNumber {
 				"googol" => 101,
 				"trestrigintillion" => 103,
 				"quattuortrigintillion" => 106,
-				"quinquatrigintillion" => 110,
+				"quinquatrigintillion" => 109,
 				"sestrigintillion" => 112,
 				"septentrigintillion" => 115,
 				"octotrigintillion" => 118,
@@ -139,7 +140,100 @@ class WordToNumber {
 				"nongentillion" => 2704,
 				"millinillion" => 3004
 			]
-		]
+		],
+
+        "french" => [
+            "single" => [
+                "zero" => '0',
+                "zéro" => '0',
+                "un" => '1',
+                "deux" => '2',
+                "trois" => '3',
+                "quatre" => '4',
+                "cinq" => '5',
+                "six" => '6',
+                "sept" => '7',
+                "huit" => '8',
+                "neuf" => '9'
+            ],
+            "tens" => [
+                "dix" => '10',
+                "onze" => '11',
+                "douze" => '12',
+                "treize" => '13',
+                "quatorze" => '14',
+                "quinze" => '15',
+                "seize" => '16',
+                "dix-sept" => '17',
+                "dix-huit" => '18',
+                "dix-neuf" => '19',
+                "vingt" => '20',
+                "trente" => '30',
+                "quarante" => '40',
+                "cinquante" => '50',
+                "soixante" => '60',
+                "soixante-dix" => '70',
+                "soixante dix" => '70',
+                "quatre-vingt" => '80',
+                "quatre vingt" => '80',
+                "quatre-vingts" => '80',
+                "quatre vingts" => '80',
+                "quatre-vingt-dix" => '90',
+                "quatre-vingt dix" => '90',
+                "quatre vingt-dix" => '90',
+                "quatre vingt dix" => '90',
+                "quatre-vingts-dix" => '90',
+                "quatre-vingts dix" => '90',
+                "quatre vingts-dix" => '90',
+                "quatre vingts dix" => '90',
+            ],
+            "hundred" => "cent",
+            "large" => [
+                "cent" => 3,
+                "mille" => 4,
+                "milles" => 4,
+                "million" => 7,
+                "millions" => 7,
+                "milliard" => 10,
+                "milliards" => 10,
+                "billion" => 13,
+                "billions" => 13,
+                "billard" => 16,
+                "billards" => 16,
+                "trillion" => 19,
+                "trillions" => 19,
+                "trillard" => 22,
+                "trillards" => 22,
+                "quadrillion" => 25,
+                "quadrillions" => 25,
+                "quadrillard" => 28,
+                "quadrillards" => 28,
+                "quintillion" => 31,
+                "quintillions" => 31,
+                "quintillard" => 34,
+                "quintillards" => 34,
+                "sextillion" => 37,
+                "sextillions" => 37,
+                "sextilliard" => 40,
+                "sextilliards" => 40,
+                "septillion" => 43,
+                "septillions" => 43,
+                "septilliard" => 46,
+                "septilliards" => 46,
+                "octillion" => 49,
+                "octillions" => 49,
+                "octilliard" => 52,
+                "octilliards" => 52,
+                "nonillion" => 55,
+                "nonillions" => 55,
+                "nonilliard" => 58,
+                "nonilliards" => 58,
+                "decillion" => 61,
+                "decillions" => 61,
+                "decilliard" => 64,
+                "decilliards" => 64,
+            ]
+        ]
 	];
 
 	/*
@@ -285,10 +379,12 @@ class WordToNumber {
 		$pre_number = FALSE;
 		$post_number = $text;
 
+		$hundred = $this->languages[ $this->language ]["hundred"];
+
 		if ( $do_check ) {
 			$check = FALSE;
 			$check_array = array_merge(
-				["hundred" => 1],
+				[$hundred => 1],
 				$this->languages[ $this->language ]["single"],
 				$this->languages[ $this->language ]["tens"]
 			);
@@ -302,11 +398,14 @@ class WordToNumber {
 				return FALSE;
 		}
 
-		if ( strpos( $text, "hundred" ) !== FALSE ) {
+		if ( strpos( $text, $hundred ) !== FALSE ) {
 
-			$matches = $this->trimArray( explode( "hundred", $text ) );
-			if ( strlen( $matches[0] ) )
+			$matches = $this->trimArray( explode( $hundred, $text ) );
+			if ( strlen( $matches[0] ) ) {
 				$pre_number = $this->parseSingle( $matches[0] );
+            } else {
+			    $pre_number = 1;
+            }
 
 			$number = $this->createNumber( $pre_number, 3 );
 			$post_number = $this->trimSeparators( $matches[1] );
@@ -361,14 +460,17 @@ class WordToNumber {
 	private function parseTens( $text ) {
 
 		$number = FALSE;
-		foreach ( $this->languages[ $this->language ]["tens"] as $word => $val ) {
+		foreach ( array_reverse($this->languages[ $this->language ]["tens"]) as $word => $val ) {
 
 			$match = explode( $word, $text );
 
 			if ( $match && isset( $match[1] ) ) {
 				$number = $val;
 				$single = ( ! empty( $match[1] ) ) ? $this->parseSingle( $match[1] ) : FALSE ;
-				return ( $single ) ? substr( $number, 0, 1 ) . $single : $number ;
+				if ( FALSE === $single ) {
+				    $single = ( ! empty( $match[1] ) ) ? $this->parseTens( $match[1] ) : FALSE ;
+                }
+				return ( $single ) ? (string)(intval($number)+intval($single)) : $number ;
 			}
 
 		}
@@ -391,7 +493,7 @@ class WordToNumber {
 
 		$text = strtolower( $text );
 
-		// loop thorugh all our "large numbers" longest to shortest
+		// loop through all our "large numbers" longest to shortest
 		$number = FALSE;
 		foreach ( array_reverse( $this->languages[ $this->language ]["large"] ) as $word => $val ) {
 
@@ -404,6 +506,9 @@ class WordToNumber {
 				$text = $match[1];
 
 				$pre_number_parsed = ( $this->parsePreNumber( $this->trimSeparators( $pre_number ), ( $number !== FALSE ) ) ) ?: '' ;
+
+				if ( empty($pre_number_parsed) )
+				    $pre_number_parsed = 1;
 
 				if ( $number == FALSE )
 					$number = $this->createNumber( $pre_number_parsed, $val );
