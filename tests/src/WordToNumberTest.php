@@ -3,72 +3,34 @@
 use daraeman\WordToNumber;
 
 class WordToNumberTest extends \PHPUnit_Framework_TestCase {
+	
+	public function testParseNumberNormal() {
 
-    public function testParseNumberNormal() {
+		$wordToNumber = new WordToNumber();
 
-        $wordToNumber = new WordToNumber();
+		$checks = [
+			"one" => "1",
+			"seventy three" => "73",
+			"one hundred" => "100",
+			"one hundred seven" => "107",
+			"one hundred seventy" => "170",
+			"one hundred seventy three" => "173",
+			"one hundred seventy-three" => "173",
+			"one hundred and seventy-three" => "173",
+			"one hundred and seventy-three thousand" => "173000",
+			"one hundred and seventy-three million" => "173000000",
+			"one hundred and seventy-three million two thousand" => "173002000",
+			"one hundred,,,,,and,,,,,seventy-three million two thousand and two" => "173002002",
+			"one hundred and - --seventy-three billion" => "173000000000",
+			"one hundred.- .,and seventy-three trillion five million sixty seven thousand one hundred and eighty two" => "173000005067182",
+			"just some extra text here one hundred and seventy-three some more text at the end" => "173",
+		];
 
-        $checks = [
-            "one" => "1",
-            "seventy three" => "73",
-            "one hundred" => "100",
-            "one hundred seven" => "107",
-            "one hundred seventy" => "170",
-            "one hundred seventy three" => "173",
-            "one hundred seventy-three" => "173",
-            "one hundred and seventy-three" => "173",
-            "one hundred and seventy-three thousand" => "173000",
-            "two hundred, seventy-three thousand" => "273000",
-            "one hundred and seventy-three million" => "173000000",
-            "one hundred and seventy-three million two thousand" => "173002000",
-            "one hundred,,,,,and,,,,,seventy-three million two thousand and two" => "173002002",
-            "one hundred and - --seventy-three billion" => "173000000000",
-            "one hundred.- .,and seventy-three trillion five million sixty seven thousand one hundred and eighty two" => "173000005067182",
-            "just some extra text here one hundred and seventy-three some more text at the end" => "173",
-        ];
-
-        foreach ( $checks as $check => $expected ) {
-            $result = $wordToNumber->parse( $check );
-            if ( $expected !== $result ) {
-                $this->fail( "'$check' yielded '$result' instead of expected '$expected'." );
-            }
-        }
-    }
-
-    public function testParseNumberInFrench() {
-
-        $wordToNumber = new WordToNumber();
-        $wordToNumber->setLanguage( 'french' );
-
-        $checks = [
-            "zéro" => "0",
-            "zero" => "0",
-            "un" => "1",
-            "quarante-deux" => "42",
-            "soixante-treize" => "73",
-            "soixante treize" => "73",
-            "quatre-vingts" => "80",
-            "quatre vingt treize" => "93",
-            "cent" => "100",
-            "six cent" => "600",
-            "cent sept" => "107",
-            "cent soixante-dix" => "170",
-            "cent soixante treize" => "173",
-            "deux cent soixante treize mille" => "273000",
-            "cent soixante treize mille" => "173000",
-            "cent soixante treize million" => "173000000",
-            "cent soixante treize millions" => "173000000",
-            "cent soixante seize million deux mille" => "176002000",
-            "neuf cent vingt-deux millions deux mille trois cent dix-huit" => "922002318",
-        ];
-
-        foreach ( $checks as $check => $expected ) {
-            $result = $wordToNumber->parse( $check );
-            if ( $expected !== $result ) {
-                $this->fail( "'$check' yielded '$result' instead of expected '$expected'." );
-            }
-        }
-    }
+		foreach ( $checks as $check => $expected ) {
+			$result = $wordToNumber->parse( $check );
+			$this->assertEquals( $expected, $result );
+		}
+	}
 
 	public function testParseNumberOddlyFormatted() {
 
@@ -83,7 +45,7 @@ class WordToNumberTest extends \PHPUnit_Framework_TestCase {
 		$wordToNumber = new WordToNumber();
 		$result = $wordToNumber->listLanguages();
 
-		$this->assertEquals( [ "english", 'french' ], $result );
+		$this->assertEquals( [ "english" ], $result );
 	}
 
 	public function testSetLanguageExists() {
